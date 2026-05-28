@@ -26,5 +26,17 @@ postRouter.post('/upload/posts', upload.single('image'), postController.imageUpl
  */
 postRouter.post('/users', postController.PostUserInfo)
 
+/**
+ * @route GET /api/posts/user/:uid
+ * @desc  Get user info by uid
+ * @access Private
+ */
+postRouter.get('/users/:uid', postController.findUserByUid)
+
+
+
+
+
+
 module.exports = postRouter;
 

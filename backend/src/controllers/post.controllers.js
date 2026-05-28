@@ -36,6 +36,21 @@ async function PostUserInfo(req, res)
 
 }
 
+// Find Specific user with a uid
+async function findUserByUid(req, res) {
+  const { uid } = req.params;
+  try {
+    const user = await postModel.findOne({ uid });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.send(user);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 
-module.exports = { imageUpload, PostUserInfo };
+module.exports = { imageUpload, PostUserInfo,findUserByUid };
