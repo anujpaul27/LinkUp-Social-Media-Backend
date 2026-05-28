@@ -2,17 +2,15 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    name: {
       type: String,
-      required: [true, "Username is required."],
-      lowercase: true, // Convert username to lowercase before saving to ensure case-insensitive uniqueness
-      unique: true,
-      trim: true,
-      minlength: [3, "Username must be at least 3 characters long."],
-      maxlength: [30, "Username must be less than 30 characters long."],
+      required: [true, "Name is required."],
+      trim: true, // Still removes spaces from the beginning and end of the name, but allows spaces in between for full names
+      minlength: [3, "Name must be at least 3 characters long."],
+      maxlength: [50, "Name must be less than 50 characters long."], // Increased to 50 for longer full names
       match: [
-        /^[a-zA-Z0-9_]+$/,
-        "Username can only contain letters, numbers, and underscores.",
+        /^[a-zA-Z\s.]+$/,
+        "Name can only contain letters, spaces, and dots.",
       ],
     },
     email: {
