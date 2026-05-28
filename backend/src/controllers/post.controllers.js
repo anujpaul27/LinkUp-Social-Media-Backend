@@ -52,5 +52,18 @@ async function findUserByUid(req, res) {
   }
 }
 
+// Get all users
+async function getAllUsers(req, res) 
+{
+  try 
+  {
+    const allUser = await postModel.find({});
+    res.send(allUser);
+  }
+  catch (error)
+  {
+    res.status(500).json({ message: error.message });
+  }
+}
 
-module.exports = { imageUpload, PostUserInfo,findUserByUid };
+module.exports = { imageUpload, PostUserInfo,findUserByUid, getAllUsers };

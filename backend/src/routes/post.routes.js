@@ -8,32 +8,32 @@ const upload = multer({ storage });
 /**
  * @route POST /api/posts/upload-image
  * @desc Upload an image for a login time profile picture
- * @access Public
  */
 postRouter.post('/upload', upload.single('image'),postController.imageUpload)
 
 /**
  * @route POST /api/posts/create
  * @desc  Upload image for a post
- * @access Private
  */
 postRouter.post('/upload/posts', upload.single('image'), postController.imageUpload)
 
 /**
  * @route POST /api/posts/user-info
  * @desc  Post user info to the database
- * @access Private
  */
 postRouter.post('/users', postController.PostUserInfo)
 
 /**
  * @route GET /api/posts/user/:uid
  * @desc  Get user info by uid
- * @access Private
  */
 postRouter.get('/users/:uid', postController.findUserByUid)
 
-
+/**
+ * @route GET /api/posts/get-all-post
+ * @desc  Get all posts
+ */
+postRouter.get('/users', postController.getAllUsers)
 
 
 
