@@ -19,5 +19,12 @@ postRouter.post('/upload', upload.single('image'),postController.imageUpload)
  */
 postRouter.post('/upload/posts', upload.single('image'), postController.imageUpload)
 
+/**
+ * @route POST /api/posts/user-info
+ * @desc  Post user info to the database
+ * @access Private
+ */
+postRouter.post('/users', postController.PostUserInfo)
+
 module.exports = postRouter;
 

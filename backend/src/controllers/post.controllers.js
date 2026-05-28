@@ -1,3 +1,4 @@
+const postModel = require("../models/post.models");
 const uploadImage = require("../services/storage.services");
 
 async function imageUpload(req, res) {
@@ -15,4 +16,26 @@ async function imageUpload(req, res) {
   }
 }
 
-module.exports = { imageUpload };
+// post user info
+async function PostUserInfo(req, res) 
+{
+  const user = req.body;
+  if (!user) {
+    return res.status(400).json({ error: "No user data provided" });
+  }
+
+  try
+  {
+    const newUser = await postModel.create(user);
+    res.send(newUser);
+  }
+  catch (error)
+  {
+    res.status(500).json({ message: error.message });
+  }
+
+}
+
+
+
+module.exports = { imageUpload, PostUserInfo };
