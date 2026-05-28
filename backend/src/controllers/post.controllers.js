@@ -1,6 +1,7 @@
 const userModel = require("../models/users.models");
 const uploadImage = require("../services/storage.services");
-const postModel = require('../models/posts.model')
+const postModel = require("../models/posts.model");
+const followModel = require("../models/flower.model");
 
 async function imageUpload(req, res) {
   try {
@@ -18,23 +19,18 @@ async function imageUpload(req, res) {
 }
 
 // post user info
-async function PostUserInfo(req, res) 
-{
+async function PostUserInfo(req, res) {
   const user = req.body;
   if (!user) {
     return res.status(400).json({ error: "No user data provided" });
   }
 
-  try
-  {
+  try {
     const newUser = await userModel.create(user);
     res.send(newUser);
-  }
-  catch (error)
-  {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
-
 }
 
 // Find Specific user with a uid
@@ -47,22 +43,17 @@ async function findUserByUid(req, res) {
     }
 
     res.send(user);
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
 // Get all users
-async function getAllUsers(req, res) 
-{
-  try 
-  {
+async function getAllUsers(req, res) {
+  try {
     const allUser = await userModel.find({});
     res.send(allUser);
-  }
-  catch (error)
-  {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
@@ -71,69 +62,72 @@ async function getAllUsers(req, res)
 async function updateUserInfo(req, res) {
   const { uid } = req.params;
   const updatedData = req.body;
-  try 
-  {
-    const updatedUser = await userModel.findOneAndUpdate({ uid }, updatedData, { new: true });
+  try {
+    const updatedUser = await userModel.findOneAndUpdate({ uid }, updatedData, {
+      new: true,
+    });
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });
     }
     res.send(updatedUser);
-  }
-  catch (error)
-  {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
 // Create a post
-async function createPost (req,res){
-  try 
-  {
+async function createPost(req, res) {
+  try {
     const postData = req.body;
     const newPost = await postModel.create(postData);
     res.send(newPost);
-  }
-  catch (error)
-  {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
 // Get all posts
-async function getAllPosts(req,res){
-  try 
-  {
+async function getAllPosts(req, res) {
+  try {
     const allPosts = await postModel.find().sort({ _id: -1 });
     res.send(allPosts);
-  } catch (error)
-  {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
-// Get user post by specific uid 
-async function getUserPostsByUid(req,res){
+// Get user post by specific uid
+async function getUserPostsByUid(req, res) {
   const { uid } = req.params;
-  try 
-  {
+  try {
     const userPosts = await postModel.find({ uid }).sort({ _id: -1 });
     res.send(userPosts);
-  } catch (error)
-  {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
+//Following Followers
+async function followUser(req, res) {
+  try
+  {
+    const obj = req.body;
+    const result = await followModel.create(obj);
+    res.send(result);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
-
-
-module.exports = { 
-  imageUpload, 
+module.exports = {
+  imageUpload,
   PostUserInfo,
-  findUserByUid, 
+  findUserByUid,
   getAllUsers,
   updateUserInfo,
   createPost,
   getAllPosts,
   getUserPostsByUid,
+  followUser,
 };

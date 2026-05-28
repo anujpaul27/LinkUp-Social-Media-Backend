@@ -63,5 +63,15 @@ postRouter.get('/post', postController.getAllPosts)
 postRouter.get('/post/:uid', postController.getUserPostsByUid)
 
 
+
+/*************** Follow and followers *********** */
+
+/**
+ * @route POST /api/posts/follow
+ * @desc  create a follow relationship between two users
+ */
+postRouter.get('/following', postController.followUser)
+
+
 module.exports = postRouter;
 
