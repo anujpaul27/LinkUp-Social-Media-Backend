@@ -1,5 +1,6 @@
 const userModel = require("../models/users.models");
 const uploadImage = require("../services/storage.services");
+const postModel = require('../models/posts.model')
 
 async function imageUpload(req, res) {
   try {
@@ -86,14 +87,24 @@ async function updateUserInfo(req, res) {
 
 // Create a post
 async function createPost (req,res){
-  
   try 
   {
     const postData = req.body;
-    const newPost = await userModel.create(postData);
+    const newPost = await postModel.create(postData);
     res.send(newPost);
   }
   catch (error)
+  {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getAllPosts(req,res){
+  try 
+  {
+    const allPosts = await postModel.find().sort({ _id: -1 });
+    res.send(allPosts);
+  } catch (error)
   {
     res.status(500).json({ message: error.message });
   }
@@ -104,4 +115,7 @@ module.exports = {
   PostUserInfo,
   findUserByUid, 
   getAllUsers,
-  updateUserInfo };
+  updateUserInfo,
+  createPost,
+  getAllPosts,
+};

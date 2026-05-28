@@ -42,5 +42,20 @@ postRouter.get('/users', postController.getAllUsers)
 postRouter.patch('/users/:uid', postController.updateUserInfo)
 
 
+/************** This is user post router area ******************* */
+
+/**
+ * @route POST /api/posts/create-post
+ * @desc  Create a new post
+ */
+postRouter.post('/post', postController.createPost)
+
+/**
+ * @route GET /api/posts/get-all-post
+ * @desc  Get all posts
+ */
+postRouter.get('/post', postController.getAllPosts)
+
+
 module.exports = postRouter;
 
