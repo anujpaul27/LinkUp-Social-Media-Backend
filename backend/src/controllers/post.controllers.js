@@ -99,6 +99,7 @@ async function createPost (req,res){
   }
 }
 
+// Get all posts
 async function getAllPosts(req,res){
   try 
   {
@@ -110,6 +111,20 @@ async function getAllPosts(req,res){
   }
 }
 
+// Get user post by specific uid 
+async function getUserPostsByUid(req,res){
+  const { uid } = req.params;
+  try 
+  {
+    const userPosts = await postModel.find({ uid }).sort({ _id: -1 });
+    res.send(userPosts);
+  } catch (error)
+  {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
 module.exports = { 
   imageUpload, 
   PostUserInfo,
@@ -118,4 +133,5 @@ module.exports = {
   updateUserInfo,
   createPost,
   getAllPosts,
+  getUserPostsByUid,
 };

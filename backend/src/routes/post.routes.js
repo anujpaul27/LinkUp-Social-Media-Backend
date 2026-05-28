@@ -56,6 +56,12 @@ postRouter.post('/post', postController.createPost)
  */
 postRouter.get('/post', postController.getAllPosts)
 
+/**
+ * @route GET /api/posts/user-posts/:uid
+ * @desc  Get all posts by a specific user uid
+ */
+postRouter.get('/post/:uid', postController.getUserPostsByUid)
+
 
 module.exports = postRouter;
 
