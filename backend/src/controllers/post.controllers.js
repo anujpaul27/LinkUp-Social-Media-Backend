@@ -1,4 +1,4 @@
-const postModel = require("../models/post.models");
+const userModel = require("../models/users.models");
 const uploadImage = require("../services/storage.services");
 
 async function imageUpload(req, res) {
@@ -26,7 +26,7 @@ async function PostUserInfo(req, res)
 
   try
   {
-    const newUser = await postModel.create(user);
+    const newUser = await userModel.create(user);
     res.send(newUser);
   }
   catch (error)
@@ -40,7 +40,7 @@ async function PostUserInfo(req, res)
 async function findUserByUid(req, res) {
   const { uid } = req.params;
   try {
-    const user = await postModel.findOne({ uid });
+    const user = await userModel.findOne({ uid });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -57,7 +57,7 @@ async function getAllUsers(req, res)
 {
   try 
   {
-    const allUser = await postModel.find({});
+    const allUser = await userModel.find({});
     res.send(allUser);
   }
   catch (error)
@@ -72,11 +72,26 @@ async function updateUserInfo(req, res) {
   const updatedData = req.body;
   try 
   {
-    const updatedUser = await postModel.findOneAndUpdate({ uid }, updatedData, { new: true });
+    const updatedUser = await userModel.findOneAndUpdate({ uid }, updatedData, { new: true });
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });
     }
     res.send(updatedUser);
+  }
+  catch (error)
+  {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Create a post
+async function createPost (req,res){
+  
+  try 
+  {
+    const postData = req.body;
+    const newPost = await userModel.create(postData);
+    res.send(newPost);
   }
   catch (error)
   {
