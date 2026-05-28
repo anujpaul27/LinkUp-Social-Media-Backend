@@ -7,6 +7,10 @@ const authController = require('../controllers/auth.controllers')
  */
 authRouter.post('/register', authController.register)
 
+/**
+ * @route GET /api/auth/login
+ */
+authRouter.get('/login', authController.login)
 
 
 module.exports = authRouter;
