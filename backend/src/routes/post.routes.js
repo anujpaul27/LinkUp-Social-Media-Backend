@@ -7,8 +7,17 @@ const upload = multer({ storage });
 
 /**
  * @route POST /api/posts/upload-image
+ * @desc Upload an image for a login time profile picture
+ * @access Public
  */
-postRouter.post('/upload-image', upload.single('image'),postController.imageUpload)
+postRouter.post('/upload', upload.single('image'),postController.imageUpload)
+
+/**
+ * @route POST /api/posts/create
+ * @desc  Upload image for a post
+ * @access Private
+ */
+postRouter.post('/upload/posts', upload.single('image'), postController.imageUpload)
 
 module.exports = postRouter;
 

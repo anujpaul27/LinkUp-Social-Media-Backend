@@ -1,15 +1,18 @@
 const uploadImage = require("../services/storage.services");
 
-
-async function imageUpload (req, res) 
-{
+async function imageUpload(req, res) {
+  try {
     const file = req.file;
     if (!file) {
-        return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const response = await uploadImage(file.buffer.toString('base64'));
+    const response = await uploadImage(file.buffer.toString("base64"));
     res.status(200).json({ url: response.url });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({ error: "Failed to upload image" });
+  }
 }
 
-module.exports = {imageUpload}
+module.exports = { imageUpload };

@@ -12,7 +12,7 @@ app.use(cors())
 
 // Routes
 app.use('/api/auth', authRouter)
-app.use('/api/posts', postRouter)
+app.use('/', postRouter)
 
 
 module.exports = app
