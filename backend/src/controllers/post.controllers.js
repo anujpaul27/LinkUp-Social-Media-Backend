@@ -66,4 +66,27 @@ async function getAllUsers(req, res)
   }
 }
 
-module.exports = { imageUpload, PostUserInfo,findUserByUid, getAllUsers };
+// Update User Specific info
+async function updateUserInfo(req, res) {
+  const { uid } = req.params;
+  const updatedData = req.body;
+  try 
+  {
+    const updatedUser = await postModel.findOneAndUpdate({ uid }, updatedData, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.send(updatedUser);
+  }
+  catch (error)
+  {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { 
+  imageUpload, 
+  PostUserInfo,
+  findUserByUid, 
+  getAllUsers,
+  updateUserInfo };

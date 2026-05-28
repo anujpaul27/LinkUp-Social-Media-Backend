@@ -35,7 +35,11 @@ postRouter.get('/users/:uid', postController.findUserByUid)
  */
 postRouter.get('/users', postController.getAllUsers)
 
-
+/**
+ * @route GET /api/posts/user/update/:uid
+ * @desc  Update user info by uid
+ */
+postRouter.patch('/users/:uid', postController.updateUserInfo)
 
 
 module.exports = postRouter;
