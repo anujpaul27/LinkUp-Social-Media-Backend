@@ -120,6 +120,19 @@ async function followUser(req, res) {
   }
 }
 
+// Get Following List
+async function getFollowingList(req, res){
+  const { uid } = req.params;
+  try
+  {
+    const followingList = await followModel.findOne({uid})
+    res.send(followingList);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   imageUpload,
   PostUserInfo,
@@ -130,4 +143,5 @@ module.exports = {
   getAllPosts,
   getUserPostsByUid,
   followUser,
+  getFollowingList,
 };

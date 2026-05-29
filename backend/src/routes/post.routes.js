@@ -72,6 +72,11 @@ postRouter.get('/post/:uid', postController.getUserPostsByUid)
  */
 postRouter.get('/following', postController.followUser)
 
+/**
+ * @route GET /api/posts/following-list/:uid
+ * @desc  Get the list of users that a specific user is following
+ */
+postRouter.get('/following/:uid', postController.getFollowingList)
 
 module.exports = postRouter;
 
