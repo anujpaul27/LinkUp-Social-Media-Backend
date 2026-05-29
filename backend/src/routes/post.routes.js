@@ -6,40 +6,16 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 /**
- * @route POST /api/posts/upload-image
- * @desc Upload an image for a login time profile picture
+ * @route POST /api/post/auth/registration/image-upload
+ * @desc Upload an image for a registration time profile picture
  */
-postRouter.post('/upload', upload.single('image'),postController.imageUpload)
+postRouter.post('auth/registration/image-upload', upload.single('image'),postController.imageUpload)
 
 /**
- * @route POST /api/posts/create
+ * @route POST /api/post/image-upload
  * @desc  Upload image for a post
  */
-postRouter.post('/upload/posts', upload.single('image'), postController.imageUpload)
-
-/**
- * @route POST /api/posts/user-info
- * @desc  Post user info to the database
- */
-postRouter.post('/users', postController.PostUserInfo)
-
-/**
- * @route GET /api/posts/user/:uid
- * @desc  Get user info by uid
- */
-postRouter.get('/users/:uid', postController.findUserByUid)
-
-/**
- * @route GET /api/posts/get-all-post
- * @desc  Get all posts
- */
-postRouter.get('/users', postController.getAllUsers)
-
-/**
- * @route GET /api/posts/user/update/:uid
- * @desc  Update user info by uid
- */
-postRouter.patch('/users/:uid', postController.updateUserInfo)
+postRouter.post('/image-upload', upload.single('image'), postController.imageUpload)
 
 
 /************** This is user post router area ******************* */
