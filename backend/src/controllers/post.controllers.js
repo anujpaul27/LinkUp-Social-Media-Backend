@@ -78,10 +78,6 @@ async function getFollowingList(req, res){
 
 module.exports = {
   imageUpload,
-  PostUserInfo,
-  findUserByUid,
-  getAllUsers,
-  updateUserInfo,
   createPost,
   getAllPosts,
   getUserPostsByUid,

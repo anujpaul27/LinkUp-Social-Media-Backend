@@ -22,7 +22,7 @@ app.use(
 
 // Routes
 app.use('/api/auth', authRouter)
-app.use('/api/post', postRouter)
+app.use('/', postRouter)
 app.use('/api/user', userRouter)
 
 

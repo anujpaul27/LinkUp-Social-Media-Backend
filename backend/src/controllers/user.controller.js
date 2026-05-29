@@ -17,7 +17,7 @@ async function PostUserInfo(req, res) {
 
 // Find Specific user with a uid
 async function findUserByUid(req, res) {
-  const { uid } = req.params;
+    const { uid } = req.params;
   try {
     const user = await userModel.findOne({ uid });
     if (!user) {
