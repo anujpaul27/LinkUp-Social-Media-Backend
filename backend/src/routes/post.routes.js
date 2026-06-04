@@ -9,7 +9,7 @@ const upload = multer({ storage });
  * @route POST /api/post/auth/registration/image-upload
  * @desc Upload an image for a registration time profile picture
  */
-postRouter.post('auth/registration/image-upload', upload.single('image'),postController.imageUpload)
+postRouter.post('/auth/registration/image-upload', upload.single('image'),postController.imageUpload)
 
 /**
  * @route POST /api/post/image-upload
