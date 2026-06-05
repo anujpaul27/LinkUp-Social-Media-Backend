@@ -39,6 +39,13 @@ postRouter.get('/post', postController.getAllPosts)
 postRouter.get('/post/:uid', postController.getUserPostsByUid)
 
 
+/**
+ * @route  PUT api/post/like
+ * @desc   Like to the post by logged in user
+ */
+postRouter.put('/api/post/like', postController.likePost)
+
+
 
 /*************** Follow and followers *********** */
 

@@ -52,27 +52,83 @@ async function getUserPostsByUid(req, res) {
 
 //Following Followers
 async function followUser(req, res) {
-  try
-  {
+  try {
     const obj = req.body;
     const result = await followModel.create(obj);
     res.send(result);
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
 // Get Following List
-async function getFollowingList(req, res){
+async function getFollowingList(req, res) {
   const { uid } = req.params;
-  try
-  {
-    const followingList = await followModel.findOne({uid})
+  try {
+    const followingList = await followModel.findOne({ uid });
     res.send(followingList);
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+}
+
+// Like to the any post
+async function likePost(req, res) {
+  try {
+    const { postId, userId } = req.body;
+
+    // if userId empty, without have a account don't like to be here
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "UserId is required.",
+      });
+    }
+
+    // 1. find the targeted post
+    const post = await postModel.findById(postId)
+    if (!post)
+    {
+      return res.status(400).json({
+        success: false,
+        message: 'Post not found!.'
+      })
+    }
+
+    // 2. Check if user has already linked the post 
+    const hashLiked = post.like.includes(userId)
+
+    let updatePost;
+    if (hashLiked)
+    {
+      // if already liked, remove (pull) userId of the array 
+      updatePost = await postModel.findByIdAndUpdate(
+        postId,
+        {$pull: {like: userId}},
+        {new:true}
+      )
+    }
+    else 
+    {
+      // if not like, add (addToSet do not push duplicate) the userId to the array
+      updatePost = await postModel.findByIdAndUpdate(
+        postId,
+        {$addToSet: {like: userId}},
+        {new: true} 
+      )
+    }
+
+    // 3. success response
+    res.status(200).json({
+      success: true,
+      likeList: updatePost.like,
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
   }
 }
 
@@ -83,4 +139,5 @@ module.exports = {
   getUserPostsByUid,
   followUser,
   getFollowingList,
+  likePost,
 };

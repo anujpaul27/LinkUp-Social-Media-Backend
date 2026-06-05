@@ -11,7 +11,7 @@ const getFormattedDate = () => {
   const year = date.getFullYear();
   
   return `${day} ${month} ${year}`;
-};
+};  
 
 const postSchema = new mongoose.Schema(
   {
@@ -35,10 +35,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       default: getFormattedDate
     },
-    like: {
-      type: [String], // Array of strings storing the uids of users who liked the post
-      default: [],
-    },
+    like: [{
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'users'
+    }]
   },
   {
     timestamps: true,
