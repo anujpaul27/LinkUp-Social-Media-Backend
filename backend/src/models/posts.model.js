@@ -38,6 +38,28 @@ const postSchema = new mongoose.Schema(
     like: [{
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'users'
+    }],
+    comments: [{
+      userId: {
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true,
+        ref: 'users'
+      },
+      userName: {
+        type: String,
+        required: true
+      },
+      userPhoto: {
+        type: String,
+      },
+      commentText: {
+        type: String,
+        required: true,
+      },
+      createAt: {
+      type: String,
+      default: getFormattedDate
+    },
     }]
   },
   {

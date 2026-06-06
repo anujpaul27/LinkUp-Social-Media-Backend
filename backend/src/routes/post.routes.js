@@ -45,6 +45,13 @@ postRouter.get('/post/:uid', postController.getUserPostsByUid)
  */
 postRouter.put('/api/post/like', postController.likePost)
 
+/**
+ * @route  PUT api/post/comment
+ * @desc   Comment on the post
+ */
+postRouter.put('/api/post/comment', postController.commentPost)
+
+
 
 
 /*************** Follow and followers *********** */

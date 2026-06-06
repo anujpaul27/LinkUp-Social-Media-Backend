@@ -86,49 +86,91 @@ async function likePost(req, res) {
     }
 
     // 1. find the targeted post
-    const post = await postModel.findById(postId)
-    if (!post)
-    {
+    const post = await postModel.findById(postId);
+    if (!post) {
       return res.status(400).json({
         success: false,
-        message: 'Post not found!.'
-      })
+        message: "Post not found!.",
+      });
     }
 
-    // 2. Check if user has already linked the post 
-    const hashLiked = post.like.includes(userId)
+    // 2. Check if user has already linked the post
+    const hashLiked = post.like.includes(userId);
 
     let updatePost;
-    if (hashLiked)
-    {
-      // if already liked, remove (pull) userId of the array 
+    if (hashLiked) {
+      // if already liked, remove (pull) userId of the array
       updatePost = await postModel.findByIdAndUpdate(
         postId,
-        {$pull: {like: userId}},
-        {new:true}
-      )
-    }
-    else 
-    {
+        { $pull: { like: userId } },
+        { new: true },
+      );
+    } else {
       // if not like, add (addToSet do not push duplicate) the userId to the array
       updatePost = await postModel.findByIdAndUpdate(
         postId,
-        {$addToSet: {like: userId}},
-        {new: true} 
-      )
+        { $addToSet: { like: userId } },
+        { new: true },
+      );
     }
 
     // 3. success response
     res.status(200).json({
       success: true,
       likeList: updatePost.like,
-    })
-
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message
-    })
+      message: error.message,
+    });
+  }
+}
+
+// Comment on the post
+async function commentPost(req, res) {
+  try {
+    const { postId, userId, userName, userPhoto, commentText } = req.body;
+
+    if (!commentText || commentText.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Comment text is required.",
+      });
+    }
+
+    const newComment = {
+      userId,
+      userName,
+      userPhoto,
+      commentText,
+    };
+    console.log(newComment);
+
+    const updatedPost = await postModel.findByIdAndUpdate(
+      postId,
+      { $push: { comments: newComment } },
+      { new: true },
+    );
+
+    if (!updatedPost) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    console.log(updatedPost);
+    res.status(200).json({
+      success: true,
+      message: "Comment added successfully",
+      commentsList: updatedPost.comments,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 }
 
@@ -140,4 +182,5 @@ module.exports = {
   followUser,
   getFollowingList,
   likePost,
+  commentPost,
 };
