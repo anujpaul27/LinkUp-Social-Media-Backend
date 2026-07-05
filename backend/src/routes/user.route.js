@@ -27,4 +27,10 @@ userRouter.get('/', userController.getAllUsers)
  */
 userRouter.patch('/:uid/update', userController.updateUserInfo)
 
+/**
+ * @route GET /api/posts/user/update/:uid
+ * @desc  Update user info by uid
+ */
+userRouter.get('/:currentUserId', userController.getAllUsersSocket);
+
 module.exports = userRouter

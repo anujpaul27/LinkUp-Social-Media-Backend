@@ -6,6 +6,7 @@ const cors = require('cors')
 const authRouter = require('./routes/auth.router')
 const postRouter = require('./routes/post.routes')
 const userRouter = require('./routes/user.route')
+const messageRouter = require('./routes/message.routes')
 
 // Middlewares
 app.use(express.json())
@@ -24,6 +25,7 @@ app.use(
 app.use('/api/auth', authRouter)
 app.use('/', postRouter)
 app.use('/api/user', userRouter)
+app.use('/api/messages', messageRouter)
 
 
 
