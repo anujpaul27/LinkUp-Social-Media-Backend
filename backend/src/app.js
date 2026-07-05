@@ -11,7 +11,7 @@ const userRouter = require('./routes/user.route')
 app.use(express.json())
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://linkup-f4145.web.app", // Firebase/Netlify frontend
+  "https://linkup-f4145.web.app", // Firebase frontend
 ];
 app.use(
   cors({

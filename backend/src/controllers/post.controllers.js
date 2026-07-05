@@ -72,6 +72,25 @@ async function getFollowingList(req, res) {
   }
 }
 
+// Update Folowing 
+async function updateFollowing (req,res)
+{
+  try 
+  {
+    const uid = req.params.uid;
+      const obj = req.body;
+      const result = await followModel.findOneAndUpdate(
+        { uid: uid }, // filter
+        { $addToSet: { following: obj.FollowingUserUid } } //Update
+      );
+      res.send(result);
+  }
+  catch (error)
+  {
+    res.send(error.message)
+  }
+}
+
 // Like to the any post
 async function likePost(req, res) {
   try {
@@ -183,4 +202,5 @@ module.exports = {
   getFollowingList,
   likePost,
   commentPost,
+  updateFollowing
 };
