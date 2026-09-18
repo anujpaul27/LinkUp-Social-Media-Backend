@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/genai": "^2.23.0",
     "@imagekit/nodejs": "^7.6.2",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

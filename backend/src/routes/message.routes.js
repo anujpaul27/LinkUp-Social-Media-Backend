@@ -1,5 +1,5 @@
 const express = require('express')
-const { getMessages, hindUnseenMessageCount } = require('../controllers/message.controller')
+const { getMessages, hindUnseenMessageCount,getMessageSuggestions } = require('../controllers/message.controller')
 const messageRouter = express.Router()
 
 messageRouter.get('/:senderId/:receiverId',getMessages)
@@ -10,6 +10,13 @@ messageRouter.get('/:senderId/:receiverId',getMessages)
  * @access  Privet
  */
 messageRouter.put('/mark-as-seen', hindUnseenMessageCount)
+
+/**
+ * @route   /api/messages/generate-message-suggetion
+ * @desc    when user click to seen message hide unseen count from this box
+ * @access  Privet
+ */
+messageRouter.post('/generate-message-suggestion', getMessageSuggestions)
 
 
 module.exports = messageRouter

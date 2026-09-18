@@ -1,4 +1,33 @@
 const messageModel = require("../models/message.model");
+const userModel = require('../models/users.models')
+const {generateChatSuggestionsService} = require('../services/ai.services')
+
+const getMessageSuggestions = async (req, res) => {
+  try {
+    const { targetUserId,currentUserId } = req.body;
+
+    const userA = await userModel.findById(currentUserId);
+    const userB = await userModel.findById(targetUserId);
+
+    if (!userA || !userB) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // fetch to the last 10 message
+    const chatHistory = await messageModel.find({
+      $or: [
+        { sender: currentUserId, receiver: targetUserId },
+        { sender: targetUserId, receiver: currentUserId }
+      ]
+    }).sort({ createdAt: -1 }).limit(4);
+
+    const suggestions = await generateChatSuggestionsService(userA, userB, chatHistory.reverse());
+    
+    res.status(200).json({ success: true,suggestions });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const saveMessage = async (messageData) => {
   try {
@@ -62,5 +91,6 @@ const hindUnseenMessageCount = async (req, res) => {
 module.exports = {
   saveMessage,
   getMessages,
-  hindUnseenMessageCount
+  hindUnseenMessageCount,
+  getMessageSuggestions
 };
