@@ -13,7 +13,7 @@ const getMessageSuggestions = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // fetch to the last 10 message
+    // fetch to the last 4 message
     const chatHistory = await messageModel.find({
       $or: [
         { sender: currentUserId, receiver: targetUserId },

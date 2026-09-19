@@ -1,10 +1,45 @@
 const { GoogleGenAI, Type } = require("@google/genai");
+const { OpenAI } = require("openai");
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const generateChatSuggestionsService = async (userA, userB, chatHistory = []) => {
-  try {
-    const formattedHistory = chatHistory
+
+
+// Groq Client Setup (OpenAI SDK)
+const fallbackAI = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
+});
+
+const generateWithFallback = async (prompt) => {
+  console.log("⚠️ Falling back to Groq AI...");
+
+  const completion = await fallbackAI.chat.completions.create({
+    model: "openai/gpt-oss-20b", 
+    messages: [
+      {
+        role: "system",
+        content: 'You are an AI for LinkUp chat. Return JSON with key "suggestions" containing array of 3 short strings.',
+      },
+      { role: "user", content: prompt },
+    ],
+    response_format: { type: "json_object" },
+  });
+
+  
+
+  const content = completion.choices[0].message.content;
+  const parsed = JSON.parse(content);
+  return parsed.suggestions;
+};
+
+const generateChatSuggestionsService = async (
+  userA,
+  userB,
+  chatHistory = [],
+) => {
+
+  const formattedHistory = chatHistory
       .slice(-5)
       .map(
         (msg) =>
@@ -12,17 +47,13 @@ const generateChatSuggestionsService = async (userA, userB, chatHistory = []) =>
       )
       .join("\n");
 
-    const prompt = `
-      You are an AI conversation assistant for LinkUp social media.
-      User A Profile: Bio: "${userA?.bio || "No bio"}", Interests: [${userA?.interests?.join(", ") || "None"}]
-      User B Profile: Bio: "${userB?.bio || "No bio"}", Interests: [${userB?.interests?.join(", ") || "None"}]
+  const prompt = `You are an AI for LinkUp chat.
+          User A Bio: "${userA?.bio?.slice(0, 60) || ""}"
+          User B Bio: "${userB?.bio?.slice(0, 60) || ""}"
+          Chat: ${formattedHistory || ""}
+          Generate 3 concise, friendly reply suggestions for User A.`;
 
-      Recent Chat History:
-      ${formattedHistory || "No previous messages yet."}
-
-      Generate 3 short, natural, and friendly message/reply suggestions for User A to send next.
-    `;
-
+  try {
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
       contents: prompt,
@@ -44,11 +75,21 @@ const generateChatSuggestionsService = async (userA, userB, chatHistory = []) =>
 
     const parsed = JSON.parse(response.text);
     return parsed.suggestions;
-  } catch (error) {
-    console.error("AI Suggestion Error:", error);
-    throw new Error("Failed to generate suggestions");
+  } catch (primaryError) {
+    console.error("❌ Primary AI (Gemini) failed:", primaryError.message);
+
+    // 2. Groq fallback function 
+    try {
+      return await generateWithFallback(prompt);
+    } catch (fallbackError) {
+      console.error(
+        "❌ Fallback AI (groq) also failed:",
+        fallbackError.message,
+      );
+      throw new Error("Both AI services are currently unavailable.");
+    }
   }
-}
+};
 
 module.exports = {
   generateChatSuggestionsService,
