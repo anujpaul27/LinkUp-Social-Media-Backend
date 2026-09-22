@@ -9,7 +9,8 @@ const userRouter = require('./routes/user.route')
 const messageRouter = require('./routes/message.routes')
 
 // Middlewares
-app.use(express.json())
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 const allowedOrigins = [
   "http://localhost:5173",
   "https://linkup-f4145.web.app", // Firebase frontend

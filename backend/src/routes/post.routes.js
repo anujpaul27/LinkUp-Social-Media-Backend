@@ -17,6 +17,12 @@ postRouter.post('/auth/registration/image-upload', upload.single('image'),postCo
  */
 postRouter.post('/image-upload', upload.single('image'), postController.imageUpload)
 
+/**
+ * @route POST /api/post/ai-generate
+ * @desc  Create user post caption with AI
+ */
+postRouter.post('/post/ai-generate', postController.generateAiPostContent)
+
 
 /************** This is user post router area ******************* */
 

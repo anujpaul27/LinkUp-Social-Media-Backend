@@ -2,6 +2,7 @@ const userModel = require("../models/users.models");
 const uploadImage = require("../services/storage.services");
 const postModel = require("../models/posts.model");
 const followModel = require("../models/flower.model");
+const { generatePolishedPost,generateCaptionFromImage } = require("../services/ai.services");
 
 async function imageUpload(req, res) {
   try {
@@ -72,22 +73,18 @@ async function getFollowingList(req, res) {
   }
 }
 
-// Update Folowing 
-async function updateFollowing (req,res)
-{
-  try 
-  {
+// Update Folowing
+async function updateFollowing(req, res) {
+  try {
     const uid = req.params.uid;
-      const obj = req.body;
-      const result = await followModel.findOneAndUpdate(
-        { uid: uid }, // filter
-        { $addToSet: { following: obj.FollowingUserUid } } //Update
-      );
-      res.send(result);
-  }
-  catch (error)
-  {
-    res.send(error.message)
+    const obj = req.body;
+    const result = await followModel.findOneAndUpdate(
+      { uid: uid }, // filter
+      { $addToSet: { following: obj.FollowingUserUid } }, //Update
+    );
+    res.send(result);
+  } catch (error) {
+    res.send(error.message);
   }
 }
 
@@ -193,6 +190,32 @@ async function commentPost(req, res) {
   }
 }
 
+// Generate post build on the text and image with AI
+const generateAiPostContent = async (req, res) => {
+  try {
+    const { type, text, base64Image, mimeType } = req.body;
+
+    if (type === "text" && text) {
+      const polishedText = await generatePolishedPost(text);
+      return res.status(200).json({ success: true, content: polishedText });
+    }
+
+    if (type === "image" && base64Image) {
+      const caption = await generateCaptionFromImage(base64Image, mimeType);
+      return res.status(200).json({ success: true, content: caption });
+    }
+
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid request payload" });
+  } catch (error) {
+    console.error("AI Post Generation Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to generate content with AI" });
+  }
+};
+
 module.exports = {
   imageUpload,
   createPost,
@@ -202,5 +225,6 @@ module.exports = {
   getFollowingList,
   likePost,
   commentPost,
-  updateFollowing
+  updateFollowing,
+  generateAiPostContent,
 };
