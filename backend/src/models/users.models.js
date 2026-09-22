@@ -30,7 +30,8 @@ const userSchema = new mongoose.Schema({
     },
     workAt: {
         type: String,
-    }
+    },
+    savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "posts" }],
 })
 
 const userModel = mongoose.model('users', userSchema);

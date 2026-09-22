@@ -33,4 +33,11 @@ userRouter.patch('/:uid/update', userController.updateUserInfo)
  */
 userRouter.get('/:currentUserId', userController.getAllUsersSocket);
 
+/**
+ * @route GET /api/posts/user/update/:uid
+ * @desc  Update user info by uid
+ */
+userRouter.post("/save-post", userController.toggleSavePost);
+userRouter.get("/saved-posts/:userId", userController.getSavedPosts);
+
 module.exports = userRouter

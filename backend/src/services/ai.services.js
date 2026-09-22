@@ -97,7 +97,7 @@ const generatePolishedPost = async (text) => {
   try {
     // Primary Provider: Gemini
     const response = await ai.models.generateContent({
-      model: "gemini-3.20-flash",
+      model: "gemini-3.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -173,7 +173,7 @@ const generateCaptionFromImage = async (
   try {
     // Primary Provider: Gemini (Vision)
     const response = await ai.models.generateContent({
-      model: "gemini-3.20-flash",
+      model: "gemini-3.5-flash",
       contents: [
         {
           inlineData: {

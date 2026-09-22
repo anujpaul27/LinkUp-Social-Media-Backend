@@ -1,6 +1,6 @@
-const { default: mongoose } = require('mongoose');
-const userModel = require('../models/users.models');
-const messageModel = require('../models/message.model');
+const { default: mongoose } = require("mongoose");
+const userModel = require("../models/users.models");
+const messageModel = require("../models/message.model");
 
 // post user info
 async function PostUserInfo(req, res) {
@@ -19,7 +19,7 @@ async function PostUserInfo(req, res) {
 
 // Find Specific user with a uid
 async function findUserByUid(req, res) {
-    const { uid } = req.params;
+  const { uid } = req.params;
   try {
     const user = await userModel.findOne({ uid });
     if (!user) {
@@ -60,46 +60,110 @@ async function updateUserInfo(req, res) {
 }
 
 const getAllUsersSocket = async (req, res) => {
-    try {
+  try {
     const { currentUserId } = req.params;
-    
-    // 1. get all users without the current user 
-    const users = await userModel.find({ _id: { $ne: new  mongoose.Types.ObjectId(currentUserId) } })
+
+    // 1. get all users without the current user
+    const users = await userModel.find({
+      _id: { $ne: new mongoose.Types.ObjectId(currentUserId) },
+    });
 
     // 2. get the last message time for any user send or receive message from the current user
     const usersWithLastMessageTime = await Promise.all(
       users?.map(async (user) => {
-        const lastMessage = await messageModel.findOne({
-          $or: [
-            { sender: currentUserId, receiver: user._id },
-            { sender: user._id, receiver: currentUserId }
-          ]
-        })
-        .sort({ createdAt: -1 }) // get the latest message 
-        .select('createdAt'); 
+        const lastMessage = await messageModel
+          .findOne({
+            $or: [
+              { sender: currentUserId, receiver: user._id },
+              { sender: user._id, receiver: currentUserId },
+            ],
+          })
+          .sort({ createdAt: -1 }) // get the latest message
+          .select("createdAt");
 
         // count unseen message for the all user
         const unseenCount = await messageModel.countDocuments({
           sender: user._id,
           receiver: currentUserId,
-          isSeen:false
-        })
+          isSeen: false,
+        });
 
         return {
           ...user.toObject(),
-          // if have a not message then set a initial data 
+          // if have a not message then set a initial data
           lastMessageTime: lastMessage ? lastMessage.createdAt : new Date(0),
-          unseenCount: unseenCount
+          unseenCount: unseenCount,
         };
-      })
+      }),
     );
 
     // 3. Sort based on the last message time (newest time on top)
-    usersWithLastMessageTime.sort((a, b) => b.lastMessageTime - a.lastMessageTime);
+    usersWithLastMessageTime.sort(
+      (a, b) => b.lastMessageTime - a.lastMessageTime,
+    );
     res.status(200).json(usersWithLastMessageTime);
-    
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Post Save or Unsave (Toggle Bookmark)
+async function toggleSavePost(req, res) {
+  try {
+    const { userId, postId } = req.body;
+
+    const user = await userModel.findById(userId);
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    const isSaved = user.savedPosts.includes(postId);
+
+    if (isSaved) {
+      // Unsave Post
+      user.savedPosts = user.savedPosts.filter(
+        (id) => id.toString() !== postId,
+      );
+      await user.save();
+      return res.status(200).json({
+        success: true,
+        isSaved: false,
+        message: "Post removed from saved",
+      });
+    } else {
+      // Save Post
+      user.savedPosts.push(postId);
+      await user.save();
+      return res.status(200).json({
+        success: true,
+        isSaved: true,
+        message: "Post saved successfully",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+// Get the saved post (Populate Post Data)
+async function getSavedPosts(req, res) {
+  try {
+    const { userId } = req.params;
+
+    const user = await userModel.findById(userId).populate({
+      path: "savedPosts",
+      options: { sort: { createdAt: -1 } },
+    });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    res.status(200).json({ success: true, savedPosts: user.savedPosts });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 }
 
@@ -108,5 +172,7 @@ module.exports = {
   findUserByUid,
   getAllUsers,
   updateUserInfo,
-  getAllUsersSocket
-}
+  getAllUsersSocket,
+  toggleSavePost,
+  getSavedPosts,
+};
