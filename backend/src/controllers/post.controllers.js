@@ -2,7 +2,10 @@ const userModel = require("../models/users.models");
 const uploadImage = require("../services/storage.services");
 const postModel = require("../models/posts.model");
 const followModel = require("../models/flower.model");
-const { generatePolishedPost,generateCaptionFromImage } = require("../services/ai.services");
+const {
+  generatePolishedPost,
+  generateCaptionFromImage,
+} = require("../services/ai.services");
 
 async function imageUpload(req, res) {
   try {
@@ -216,6 +219,58 @@ const generateAiPostContent = async (req, res) => {
   }
 };
 
+// Delete Post Controller
+const deletePost = async (req, res) => {
+  try {
+    const { id } = req.params; // Post ID
+    const { userId } = req.body; // User ID sent via axios data option
+
+    // 1. check to the user id send or not 
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required to perform this action",
+      });
+    }
+
+    // 2. Post exist or not in the database 
+    const post = await postModel.findById(id);
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    // 3. Security Check: post owner or not 
+    // post.uid means post creator and userId means request sender is same then delete it
+    if (post.uid.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized: You can only delete your own posts",
+      });
+    }
+
+    // 4. Remove post from the database 
+    await postModel.findByIdAndDelete(id);
+
+    // 5. Remove post your save list 
+    await userModel.updateMany({ savedPosts: id }, { $pull: { savedPosts: id } });
+
+    return res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error in deletePost controller:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   imageUpload,
   createPost,
@@ -227,4 +282,5 @@ module.exports = {
   commentPost,
   updateFollowing,
   generateAiPostContent,
+  deletePost
 };

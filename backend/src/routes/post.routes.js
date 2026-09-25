@@ -75,5 +75,12 @@ postRouter.get('/following', postController.followUser)
 postRouter.get('/following/:uid', postController.getFollowingList)
 postRouter.patch('/following/:uid', postController.updateFollowing)
 
+
+/**
+ * @route   POST /api/posts/delete/:id
+ * @desc    
+ */
+postRouter.post('/api/posts/delete/:id', postController.deletePost)
+
 module.exports = postRouter;
 
