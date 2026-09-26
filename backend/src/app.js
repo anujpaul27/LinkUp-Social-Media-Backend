@@ -7,6 +7,7 @@ const authRouter = require('./routes/auth.router')
 const postRouter = require('./routes/post.routes')
 const userRouter = require('./routes/user.route')
 const messageRouter = require('./routes/message.routes')
+const storyRoutes = require("./routes/story.routes");
 
 // Middlewares
 app.use(express.json({ limit: "50mb" }));
@@ -27,6 +28,7 @@ app.use('/api/auth', authRouter)
 app.use('/', postRouter)
 app.use('/api/user', userRouter)
 app.use('/api/messages', messageRouter)
+app.use("/api/story", storyRoutes);
 
 
 
