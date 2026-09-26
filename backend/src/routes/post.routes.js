@@ -80,7 +80,7 @@ postRouter.patch('/following/:uid', postController.updateFollowing)
  * @route   POST /api/posts/delete/:id
  * @desc    
  */
-postRouter.post('/api/posts/delete/:id', postController.deletePost)
+postRouter.delete('/api/posts/delete/:id', postController.deletePost)
 
 module.exports = postRouter;
 
